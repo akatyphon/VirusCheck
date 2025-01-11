@@ -8,6 +8,7 @@ import android.provider.OpenableColumns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
@@ -19,19 +20,33 @@ import com.madinaappstudio.viruscheck.databinding.FragmentScanBinding
 import com.madinaappstudio.viruscheck.models.FileReportResponse
 import com.madinaappstudio.viruscheck.models.FileUploadResponse
 import com.madinaappstudio.viruscheck.models.ScanResultType
+import com.madinaappstudio.viruscheck.models.UrlScanReportResponse
+import com.madinaappstudio.viruscheck.models.UrlScanResponse
 import com.madinaappstudio.viruscheck.utils.LoadingDialog
 import com.madinaappstudio.viruscheck.utils.getVirusApi
+import com.madinaappstudio.viruscheck.utils.setLog
 import com.madinaappstudio.viruscheck.utils.showToast
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.net.URLEncoder
 import java.security.MessageDigest
+import java.util.Base64
 
 class ScanFragment : Fragment() {
 
@@ -63,8 +78,17 @@ class ScanFragment : Fragment() {
 
         loadingDialog = LoadingDialog(requireContext())
 
-        binding.btnFileScanUpload.setOnClickListener {
+        binding.btnScanFileUpload.setOnClickListener {
             launcher?.launch("*/*")
+        }
+
+        binding.btnScanUrl.setOnClickListener {
+            val editText = binding.etScanInputUrl.text.toString().trim()
+            if (editText.isNotEmpty()){
+                scanUrl(editText)
+            } else {
+                showToast(requireContext(), "Please enter url")
+            }
         }
 
         binding.mtScanToolbar.setOnMenuItemClickListener { menuItem ->
@@ -98,13 +122,13 @@ class ScanFragment : Fragment() {
 
                 } else {
                     loadingDialog.hide()
-                    showToast(requireContext(), "Failed to upload file")
+                    showAnalyzeFailure()
                 }
             }
 
             override fun onFailure(p0: Call<FileUploadResponse>, p1: Throwable) {
                 loadingDialog.hide()
-                showToast(requireContext(), p1.localizedMessage)
+                showToast(requireContext(), p1.localizedMessage, Toast.LENGTH_LONG)
             }
 
         })
@@ -128,16 +152,82 @@ class ScanFragment : Fragment() {
                     findNavController().navigate(action)
                 } else {
                     loadingDialog.hide()
-                    showToast(requireContext(), "Failed to analyze file")
+                    showAnalyzeFailure()
                 }
             }
 
             override fun onFailure(p0: Call<FileReportResponse>, p1: Throwable) {
                 loadingDialog.hide()
-                showAnalyzeFailure()
+                showToast(requireContext(), p1.localizedMessage, Toast.LENGTH_LONG)
             }
 
         })
+    }
+
+    private fun scanUrl(url: String) {
+
+        loadingDialog.show()
+        loadingDialog.setText("Analyzing url...", "This may take long, please wait...")
+
+        val encodedUrl = "url=${URLEncoder.encode(url, "UTF-8")}"
+        val requestBody = encodedUrl.toRequestBody("application/x-www-form-urlencoded".toMediaTypeOrNull())
+
+        val call = RetrofitService.service.scanUrl(requestBody, apiKey)
+
+        call.enqueue(object : Callback<UrlScanResponse> {
+            override fun onResponse(p0: Call<UrlScanResponse>, p1: Response<UrlScanResponse>) {
+                val body = p1.body()
+                if (body != null) {
+                    val handler = Handler(Looper.getMainLooper())
+                    val urlBase64 = getBase64(url)
+                    handler.postDelayed({
+                        getUrlReport(urlBase64)
+                    }, 5000)
+                } else {
+                    loadingDialog.hide()
+                    showAnalyzeFailure()
+                }
+            }
+
+            override fun onFailure(p0: Call<UrlScanResponse>, p1: Throwable) {
+                loadingDialog.hide()
+                showToast(requireContext(), p1.localizedMessage, Toast.LENGTH_LONG)
+            }
+
+        })
+    }
+
+    private fun getUrlReport(analysisId: String){
+
+        val call = RetrofitService.service.getUrlReport(analysisId, apiKey)
+
+        call.enqueue(object : Callback<UrlScanReportResponse>{
+            override fun onResponse(
+                p0: Call<UrlScanReportResponse>,
+                p1: Response<UrlScanReportResponse>
+            ) {
+                val body = p1.body()
+                if (body != null) {
+                    val action = ScanFragmentDirections.actionScanToScanResult(ScanResultType(urlScanReportResponse = body))
+                    findNavController().navigate(action)
+                    loadingDialog.hide()
+                } else {
+                    loadingDialog.hide()
+                    showAnalyzeFailure()
+                }
+            }
+
+            override fun onFailure(p0: Call<UrlScanReportResponse>, p1: Throwable) {
+                loadingDialog.hide()
+                showToast(requireContext(), p1.localizedMessage, Toast.LENGTH_LONG)
+            }
+
+        })
+    }
+
+    fun getBase64(url: String): String {
+        val base64Encoded = Base64.getUrlEncoder().withoutPadding().encodeToString(url.toByteArray(Charsets.UTF_8))
+        return base64Encoded
     }
 
     private fun Uri.toFile(): File {

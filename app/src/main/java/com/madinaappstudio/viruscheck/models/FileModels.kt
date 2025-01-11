@@ -5,49 +5,43 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class ScanResultType(
-    val fileReportResponse: FileReportResponse? = null,
-): Parcelable
-
-@Parcelize
 data class FileUploadResponse(
-    val data: Data
+    @SerializedName("data") val fileData: FileData
 ) : Parcelable
 
 @Parcelize
 data class FileReportResponse(
-    val data: Data,
+    @SerializedName("data") val fileData: FileData
 ) : Parcelable
 
 @Parcelize
-data class Data(
+data class FileData(
     val type: String? = null,
     val id: String? = null,
-    val links: Links,
-    val attributes: Attributes
+    @SerializedName("links") val fileLinks: FileLinks,
+    @SerializedName("attributes") val fileAttributes: FileAttributes? = null
 ) : Parcelable
 
 @Parcelize
-data class Links(
-    val self: String? = null,
-    val item: String? = null
+data class FileLinks(
+    val self: String? = null, val item: String? = null
 ) : Parcelable
 
 @Parcelize
-data class Attributes(
+data class FileAttributes(
     val names: List<String>? = null,
     val md5: String? = null,
     val magic: String? = null,
     val ssdeep: String? = null,
-    @SerializedName("last_analysis_results") val lastAnalysisResult: Map<String, EngineResult>? = null,
+    @SerializedName("last_analysis_results") val lastAnalysisResult: Map<String, FileEngineResult>? = null,
     val sha1: String? = null,
     @SerializedName("unique_sources") val uniqueSources: Int? = null,
-    @SerializedName("last_analysis_stats") val lastAnalysisStats: Stats,
+    @SerializedName("last_analysis_stats") val lastAnalysisStats: FileStats,
     val tlsh: String? = null,
     val tags: List<String>? = null,
-    val trids: List<Map<String, TridItem>>? = null,
+    val trids: List<Map<String, FileTridItem>>? = null,
     @SerializedName("last_modification_date") val lastModificationDate: Long? = null,
-    @SerializedName("total_votes") val totalVotes: TotalVotes? = null,
+    @SerializedName("total_votes") val totalVotes: FileTotalVotes? = null,
     val sha256: String? = null,
     val size: Long? = null,
     @SerializedName("type_description") val typeDescription: String? = null,
@@ -65,7 +59,7 @@ data class Attributes(
 ) : Parcelable
 
 @Parcelize
-data class EngineResult(
+data class FileEngineResult(
     val method: String? = null,
     @SerializedName("engine_name") val engineName: String? = null,
     @SerializedName("engine_version") val engineVersion: String? = null,
@@ -75,7 +69,7 @@ data class EngineResult(
 ) : Parcelable
 
 @Parcelize
-data class Stats(
+data class FileStats(
     val malicious: Int,
     val suspicious: Int,
     val undetected: Int,
@@ -88,13 +82,11 @@ data class Stats(
 
 
 @Parcelize
-data class TotalVotes(
-    val harmless: Int? = null,
-    val malicious: Int? = null
+data class FileTotalVotes(
+    val harmless: Int? = null, val malicious: Int? = null
 ) : Parcelable
 
 @Parcelize
-data class TridItem(
-    @SerializedName("file_type") val fileType: String? = null,
-    val probability: Double? = null
+data class FileTridItem(
+    @SerializedName("file_type") val fileType: String? = null, val probability: Double? = null
 ) : Parcelable

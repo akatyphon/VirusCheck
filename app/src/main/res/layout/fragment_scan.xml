@@ -62,7 +62,7 @@
                         android:textStyle="bold" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnFileScanUpload"
+                        android:id="@+id/btnScanFileUpload"
                         style="@style/ThemeOverlay.Material3.Button.ElevatedButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -138,12 +138,14 @@
                     android:layout_height="wrap_content">
 
                     <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etScanInputUrl"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnScanUrl"
                     android:backgroundTint="@color/primary"
                     android:text="Scan URL"
                     android:layout_width="wrap_content"

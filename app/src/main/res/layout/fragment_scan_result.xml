@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             app:navigationIconTint="@color/black"
             app:navigationIcon="@drawable/ic_arrow_back"
-            app:title="File Scan Result" />
+            app:title="" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
