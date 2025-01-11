@@ -1,5 +1,3 @@
-import com.android.build.api.variant.BuildConfigField
-import java.io.FileNotFoundException
 import java.util.Properties
 
 plugins {
