@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_home"
+    app:startDestination="@id/graphScanFragment">
+
+    <fragment
+        android:id="@+id/graphScanFragment"
+        android:name="com.madinaappstudio.viruscheck.fragments.ScanFragment"
+        android:label="ScanFragment"
+        tools:layout="@layout/fragment_scan" />
+    <fragment
+        android:id="@+id/graphStatsFragment"
+        android:name="com.madinaappstudio.viruscheck.fragments.StatsFragment"
+        android:label="StatsFragment"
+        tools:layout="@layout/fragment_stats" />
+    <fragment
+        android:id="@+id/graphSettingsFragment"
+        android:name="com.madinaappstudio.viruscheck.fragments.SettingsFragment"
+        android:label="SettingFragment"
+        tools:layout="@layout/fragment_settings" />
+    <fragment
+        android:id="@+id/graphFileScanFragment"
+        android:name="com.madinaappstudio.viruscheck.tabs.FileScanFragment"
+        android:label="FileScanFragment"
+        tools:layout="@layout/fragment_file_scan" />
+</navigation>
