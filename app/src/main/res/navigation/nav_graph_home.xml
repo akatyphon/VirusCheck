@@ -9,20 +9,36 @@
         android:id="@+id/graphScanFragment"
         android:name="com.madinaappstudio.viruscheck.fragments.ScanFragment"
         android:label="ScanFragment"
-        tools:layout="@layout/fragment_scan" />
+        tools:layout="@layout/fragment_scan" >
+
+        <action
+            android:id="@+id/actionScanToScanResult"
+            app:destination="@id/graphScanResultFragment"/>
+
+    </fragment>
+
     <fragment
         android:id="@+id/graphStatsFragment"
         android:name="com.madinaappstudio.viruscheck.fragments.StatsFragment"
         android:label="StatsFragment"
         tools:layout="@layout/fragment_stats" />
+
     <fragment
         android:id="@+id/graphSettingsFragment"
         android:name="com.madinaappstudio.viruscheck.fragments.SettingsFragment"
         android:label="SettingFragment"
         tools:layout="@layout/fragment_settings" />
+
     <fragment
-        android:id="@+id/graphFileScanFragment"
-        android:name="com.madinaappstudio.viruscheck.tabs.FileScanFragment"
-        android:label="FileScanFragment"
-        tools:layout="@layout/fragment_file_scan" />
+        android:id="@+id/graphScanResultFragment"
+        android:name="com.madinaappstudio.viruscheck.fragments.ScanResultFragment"
+        android:label="ScanResultFragment"
+        tools:layout="@layout/fragment_scan_result">
+
+        <argument
+            android:name="scanReport"
+            app:argType="com.madinaappstudio.viruscheck.models.ScanResultType"/>
+
+    </fragment>
+
 </navigation>
