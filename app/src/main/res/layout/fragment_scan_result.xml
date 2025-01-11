@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".fragments.ScanFragment">
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/mtScanResultToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:navigationIconTint="@color/black"
+            app:navigationIcon="@drawable/ic_arrow_back"
+            app:title="File Scan Result" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.Material3.CardView.Elevated"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <com.google.android.material.textview.MaterialTextView
+                    style="@style/TextAppearance.AppCompat.Medium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Scan Result"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="65dp"
+                        android:orientation="horizontal">
+
+                        <include
+                            android:id="@+id/viewScanResultUndetected"
+                            layout="@layout/scan_result_item"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
+
+                        <View
+                            android:layout_width="16dp"
+                            android:layout_height="match_parent" />
+
+                        <include
+                            android:id="@+id/viewScanResultMalicious"
+                            layout="@layout/scan_result_item"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="65dp"
+                        android:layout_marginTop="16dp"
+                        android:orientation="horizontal">
+
+                        <include
+                            android:id="@+id/viewScanResultSuspicious"
+                            layout="@layout/scan_result_item"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
+
+                        <View
+                            android:layout_width="16dp"
+                            android:layout_height="match_parent" />
+
+                        <include
+                            android:id="@+id/viewScanResultTimeout"
+                            layout="@layout/scan_result_item"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.Material3.CardView.Elevated"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <com.google.android.material.textview.MaterialTextView
+                    style="@style/TextAppearance.AppCompat.Medium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Activities Log"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="0dp"
+                        android:layout_height="21dp"
+                        android:layout_weight="2"
+                        android:gravity="start|center"
+                        android:text="First Submission"
+                        android:textColor="@color/light_gray"
+                        app:fontFamily="@font/roboto" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/tvScanResultFirstSub"
+                        android:layout_width="0dp"
+                        android:layout_height="21dp"
+                        android:layout_weight="1"
+                        android:gravity="end|center"
+                        android:text="333"
+                        android:textColor="@color/light_gray"
+                        app:fontFamily="@font/roboto" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="0dp"
+                        android:layout_height="21dp"
+                        android:layout_weight="2"
+                        android:gravity="start|center"
+                        android:text="Last Submission"
+                        android:textColor="@color/light_gray"
+                        app:fontFamily="@font/roboto" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/tvScanResultLastSub"
+                        android:layout_width="0dp"
+                        android:layout_height="21dp"
+                        android:layout_weight="1"
+                        android:gravity="end|center"
+                        android:text="333"
+                        android:textColor="@color/light_gray"
+                        app:fontFamily="@font/roboto" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="0dp"
+                        android:layout_height="21dp"
+                        android:layout_weight="2"
+                        android:gravity="start|center"
+                        android:text="Last Analysis"
+                        android:textColor="@color/light_gray"
+                        app:fontFamily="@font/roboto" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/tvScanResultLastAnalysis"
+                        android:layout_width="0dp"
+                        android:layout_height="21dp"
+                        android:layout_weight="1"
+                        android:gravity="end|center"
+                        android:text="333"
+                        android:textColor="@color/light_gray"
+                        app:fontFamily="@font/roboto" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+
+</LinearLayout>
