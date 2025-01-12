@@ -44,6 +44,7 @@ import retrofit2.Response
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.net.URL
 import java.net.URLEncoder
 import java.security.MessageDigest
 import java.util.Base64
@@ -83,9 +84,9 @@ class ScanFragment : Fragment() {
         }
 
         binding.btnScanUrl.setOnClickListener {
-            val editText = binding.etScanInputUrl.text.toString().trim()
-            if (editText.isNotEmpty()){
-                scanUrl(editText)
+            val url = binding.etScanInputUrl.text.toString().trim()
+            if (url.isNotEmpty()) {
+                if (isValidUrl(url)) scanUrl(url) else showToast(requireContext(), "Invalid url")
             } else {
                 showToast(requireContext(), "Please enter url")
             }
@@ -99,6 +100,11 @@ class ScanFragment : Fragment() {
             true
         }
 
+    }
+
+    private fun isValidUrl(url: String): Boolean {
+        val domainRegex = "^[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$".toRegex()
+        return domainRegex.matches(url)
     }
 
     private fun scanFile(file: File) {
@@ -118,7 +124,7 @@ class ScanFragment : Fragment() {
                     val handler = Handler(Looper.getMainLooper())
                     handler.postDelayed({
                         getFileReport(sha256)
-                    }, 1000)
+                    }, 5000)
 
                 } else {
                     loadingDialog.hide()
@@ -145,11 +151,14 @@ class ScanFragment : Fragment() {
             ) {
                 val response = p1.body()
                 if (response != null) {
-                    loadingDialog.hide()
                     val action = ScanFragmentDirections.actionScanToScanResult(
                         ScanResultType(fileReportResponse = response)
                     )
                     findNavController().navigate(action)
+                    loadingDialog.makeSuccessView(true)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        loadingDialog.hide()
+                    }, 2000)
                 } else {
                     loadingDialog.hide()
                     showAnalyzeFailure()
@@ -170,7 +179,8 @@ class ScanFragment : Fragment() {
         loadingDialog.setText("Analyzing url...", "This may take long, please wait...")
 
         val encodedUrl = "url=${URLEncoder.encode(url, "UTF-8")}"
-        val requestBody = encodedUrl.toRequestBody("application/x-www-form-urlencoded".toMediaTypeOrNull())
+        val requestBody =
+            encodedUrl.toRequestBody("application/x-www-form-urlencoded".toMediaTypeOrNull())
 
         val call = RetrofitService.service.scanUrl(requestBody, apiKey)
 
@@ -197,20 +207,25 @@ class ScanFragment : Fragment() {
         })
     }
 
-    private fun getUrlReport(analysisId: String){
+    private fun getUrlReport(analysisId: String) {
 
         val call = RetrofitService.service.getUrlReport(analysisId, apiKey)
 
-        call.enqueue(object : Callback<UrlScanReportResponse>{
+        call.enqueue(object : Callback<UrlScanReportResponse> {
             override fun onResponse(
                 p0: Call<UrlScanReportResponse>,
                 p1: Response<UrlScanReportResponse>
             ) {
                 val body = p1.body()
                 if (body != null) {
-                    val action = ScanFragmentDirections.actionScanToScanResult(ScanResultType(urlScanReportResponse = body))
+                    val action = ScanFragmentDirections.actionScanToScanResult(
+                        ScanResultType(urlScanReportResponse = body)
+                    )
                     findNavController().navigate(action)
-                    loadingDialog.hide()
+                    loadingDialog.makeSuccessView(false)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        loadingDialog.hide()
+                    }, 2000)
                 } else {
                     loadingDialog.hide()
                     showAnalyzeFailure()
@@ -226,7 +241,8 @@ class ScanFragment : Fragment() {
     }
 
     fun getBase64(url: String): String {
-        val base64Encoded = Base64.getUrlEncoder().withoutPadding().encodeToString(url.toByteArray(Charsets.UTF_8))
+        val base64Encoded =
+            Base64.getUrlEncoder().withoutPadding().encodeToString(url.toByteArray(Charsets.UTF_8))
         return base64Encoded
     }
 
