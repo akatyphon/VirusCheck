@@ -13,7 +13,7 @@ import com.madinaappstudio.viruscheck.databinding.FragmentRegisterUserBinding
 import com.madinaappstudio.viruscheck.utils.ProgressLoading
 import com.madinaappstudio.viruscheck.utils.SharedPreference
 import com.madinaappstudio.viruscheck.utils.USER_NODE
-import com.madinaappstudio.viruscheck.utils.getHardwareId
+import com.madinaappstudio.viruscheck.utils.generateUUID
 import com.madinaappstudio.viruscheck.utils.showToast
 
 class RegisterUserFragment : Fragment() {
@@ -31,7 +31,7 @@ class RegisterUserFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val userId = getHardwareId()
+        val userId = generateUUID()
         val progressLoading = ProgressLoading(requireContext())
 
         binding.btnRegisterUser.setOnClickListener {

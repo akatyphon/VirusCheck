@@ -1,14 +1,12 @@
 package com.madinaappstudio.viruscheck.onboarding
 
 import android.content.Context
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.postDelayed
 import androidx.fragment.app.Fragment
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
@@ -16,8 +14,7 @@ import com.madinaappstudio.viruscheck.R
 import com.madinaappstudio.viruscheck.databinding.FragmentVerifyUserBinding
 import com.madinaappstudio.viruscheck.utils.SharedPreference
 import com.madinaappstudio.viruscheck.utils.USER_NODE
-import com.madinaappstudio.viruscheck.utils.getHardwareId
-import com.madinaappstudio.viruscheck.utils.showToast
+import com.madinaappstudio.viruscheck.utils.generateUUID
 
 class VerifyUserFragment : Fragment() {
 
@@ -50,7 +47,7 @@ class VerifyUserFragment : Fragment() {
     }
 
     private fun verifyUser(){
-        val userId = getHardwareId()
+        val userId = generateUUID()
         val handler = Handler(Looper.getMainLooper())
 
         val collection = Firebase.firestore.collection(USER_NODE)
