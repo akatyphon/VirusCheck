@@ -42,7 +42,7 @@ class RegisterUserFragment : Fragment() {
                     .set(mapOf("userId" to userId, "name" to name))
                     .addOnSuccessListener {
                         SharedPreference(requireContext())
-                            .saveUserSession(true, userId)
+                            .saveUserSession(true, userId, name)
                         showToast(requireContext(), "Success")
                         startActivity(Intent(requireContext(), HomeActivity::class.java))
                         requireActivity().finishAffinity()

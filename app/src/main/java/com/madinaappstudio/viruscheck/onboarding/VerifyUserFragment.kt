@@ -55,7 +55,7 @@ class VerifyUserFragment : Fragment() {
             .addOnSuccessListener {
                 if (it.exists()) {
                     changeView(0)
-                    preference.saveUserSession(true, userId)
+                    preference.saveUserSession(true, userId, it.getString("name")!!)
                     handler.postDelayed({
                         listener?.onVerifySuccess()
                     }, 2000)
