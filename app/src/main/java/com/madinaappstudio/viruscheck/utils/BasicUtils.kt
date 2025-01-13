@@ -82,7 +82,7 @@ class LoadingDialog(private val context: Context) {
 
 }
 
-fun getHardwareId(): String {
+fun generateUUID(): String {
     return "35" +
             Build.BOARD.length % 10 +
             Build.BRAND.length % 10 +
