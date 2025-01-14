@@ -1,15 +1,210 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingHorizontal="16dp"
     tools:context=".fragments.SettingsFragment">
 
-    <TextView
-        android:gravity="center"
-        android:textSize="24sp"
+    <com.google.android.material.card.MaterialCardView
+        style="@style/Widget.Material3.CardView.Elevated"
+        android:layout_marginTop="56dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Settings" />
+        android:layout_height="wrap_content">
 
-</FrameLayout>
+        <LinearLayout
+            android:padding="16dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.Material3.CardView.Filled"
+                android:backgroundTint="@android:color/transparent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="25dp"
+                app:cardPreventCornerOverlap="false">
+
+                <ImageView
+                    android:id="@+id/ivSettingsPic"
+                    android:src="@drawable/ic_account_circle"
+                    android:layout_width="62dp"
+                    android:layout_height="62dp"/>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <LinearLayout
+                android:layout_marginStart="12dp"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tvSettingsUserName"
+                    android:text="@string/app_name"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:textSize="14sp"
+                    android:id="@+id/tvSettingsUserId"
+                    android:text="@string/app_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        style="@style/Widget.Material3.CardView.Elevated"
+        android:layout_marginTop="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:padding="16dp"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:text="Account Setting"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSettingsNotification"
+                app:cornerRadius="0dp"
+                app:rippleColor="@android:color/transparent"
+                android:focusable="false"
+                android:layout_marginTop="16dp"
+                style="@style/Widget.Material3.Button.TextButton.Icon"
+                android:text="Notification Settings"
+                android:textAlignment="textStart"
+                android:textColor="@color/dark_gray"
+                android:drawableTint="@color/dark_gray"
+                android:drawableEnd="@drawable/ic_arrow_forward"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSettingsSecurity"
+                android:layout_marginTop="15dp"
+                app:cornerRadius="0dp"
+                app:rippleColor="@android:color/transparent"
+                style="@style/Widget.Material3.Button.TextButton.Icon"
+                android:text="Security Settings"
+                android:textAlignment="textStart"
+                android:textColor="@color/dark_gray"
+                android:drawableTint="@color/dark_gray"
+                android:drawableEnd="@drawable/ic_arrow_forward"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSettingsPrivacy"
+                android:layout_marginTop="15dp"
+                app:cornerRadius="0dp"
+                app:rippleColor="@android:color/transparent"
+                style="@style/Widget.Material3.Button.TextButton.Icon"
+                android:text="Privacy Policy"
+                android:textAlignment="textStart"
+                android:textColor="@color/dark_gray"
+                android:drawableTint="@color/dark_gray"
+                android:drawableEnd="@drawable/ic_arrow_forward"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSettingsTnC"
+                android:layout_marginTop="15dp"
+                app:cornerRadius="0dp"
+                app:rippleColor="@android:color/transparent"
+                style="@style/Widget.Material3.Button.TextButton.Icon"
+                android:text="Terms of Service"
+                android:textAlignment="textStart"
+                android:textColor="@color/dark_gray"
+                android:drawableTint="@color/dark_gray"
+                android:drawableEnd="@drawable/ic_arrow_forward"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <LinearLayout
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.textview.MaterialTextView
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:text="App Version"
+                    android:textAlignment="textStart"
+                    android:textColor="@color/dark_gray"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"/>
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tvSettingsVersion"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:text="1.0.0"
+                    android:textAlignment="textEnd"
+                    android:textColor="@color/dark_gray"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        style="@style/Widget.Material3.CardView.Elevated"
+        android:layout_marginTop="11.5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSettingsDelete"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            app:strokeColor="#EF4444"
+            app:cornerRadius="8dp"
+            android:backgroundTint="@android:color/transparent"
+            android:textColor="#EF4444"
+            android:text="Delete Account"
+            android:layout_margin="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</LinearLayout>
