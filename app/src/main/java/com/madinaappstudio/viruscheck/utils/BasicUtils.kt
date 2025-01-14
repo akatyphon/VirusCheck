@@ -7,13 +7,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
-import android.widget.ImageView
-import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import com.google.android.material.textview.MaterialTextView
 import com.madinaappstudio.viruscheck.BuildConfig
 import com.madinaappstudio.viruscheck.R
+import com.madinaappstudio.viruscheck.databinding.DialogScanLoadingBinding
 
 const val USER_NODE = "USERS"
 
@@ -31,11 +29,10 @@ fun setLog(msg: Any?) {
 
 class LoadingDialog(private val context: Context) {
 
-    private val dialogView = LayoutInflater.from(context)
-        .inflate(R.layout.dialog_scan_loading, null)
+    private val binding = DialogScanLoadingBinding.inflate(LayoutInflater.from(context))
 
     private val builder = AlertDialog.Builder(context).create().apply {
-        setView(dialogView)
+        setView(binding.root)
         setCancelable(false)
         window?.setBackgroundDrawableResource(android.R.color.transparent)
         window?.setDimAmount(1f)
@@ -54,29 +51,20 @@ class LoadingDialog(private val context: Context) {
     }
 
     fun setText(status: String, msg: String) {
-        val tvStatus = dialogView.findViewById<MaterialTextView>(R.id.tvDialogStatus)
-        val tvMsg = dialogView.findViewById<MaterialTextView>(R.id.tvDialogMsg)
-
-        tvStatus.text = status
-        tvMsg.text = msg
+        binding.tvDialogStatus.text = status
+        binding.tvDialogMsg.text = msg
     }
 
     fun makeSuccessView(isFile: Boolean) {
-        val pbCircular = dialogView.findViewById<ProgressBar>(R.id.pbDialogProgressC)
-        val ivSuccess = dialogView.findViewById<ImageView>(R.id.ivDialogSuccess)
-        val tvStatus = dialogView.findViewById<MaterialTextView>(R.id.tvDialogStatus)
-        val pbHorizontal = dialogView.findViewById<ProgressBar>(R.id.pbDialogProgressH)
-        val tvMsg = dialogView.findViewById<MaterialTextView>(R.id.tvDialogMsg)
-
-        pbCircular.visibility = View.GONE
-        ivSuccess.visibility = View.VISIBLE
-        tvStatus.text = "Scan Completed"
-        tvStatus.setTypeface(null, Typeface.BOLD)
-        pbHorizontal.visibility = View.GONE
+        binding.pbDialogProgressC.visibility = View.GONE
+        binding.ivDialogSuccess.visibility = View.VISIBLE
+        binding.tvDialogStatus.text = "Scan Completed"
+        binding.tvDialogStatus.setTypeface(null, Typeface.BOLD)
+        binding.pbDialogProgressH.visibility = View.GONE
         if (isFile){
-            tvMsg.text = "File have been successfully analyzed"
+            binding.tvDialogMsg.text = "File have been successfully analyzed"
         } else {
-            tvMsg.text = "URL have been successfully analyzed"
+            binding.tvDialogMsg.text = "URL have been successfully analyzed"
         }
     }
 
@@ -98,20 +86,21 @@ fun generateUUID(): String {
             Build.USER.length % 10
 }
 
-class ProgressLoading(private val context: Context) {
+class ProgressLoading(context: Context) {
     private val dialogView = LayoutInflater.from(context)
         .inflate(R.layout.dialog_progress_loading, null)
     private val builder = AlertDialog.Builder(context).create().apply {
         setView(dialogView)
         setCancelable(false)
         window?.setBackgroundDrawableResource(android.R.color.transparent)
-        window?.setDimAmount(8f)
+        window?.setDimAmount(.7f)
     }
 
+    val width = (context.resources.displayMetrics.widthPixels * 0.50)
     fun show(){
         builder.show()
         builder.window?.setLayout(
-            (context.resources.displayMetrics.widthPixels * 0.50).toInt(),
+            width.toInt(),
             WindowManager.LayoutParams.WRAP_CONTENT
         )
     }

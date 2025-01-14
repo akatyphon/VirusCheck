@@ -9,11 +9,13 @@ import androidx.fragment.app.Fragment
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import com.madinaappstudio.viruscheck.HomeActivity
+import com.madinaappstudio.viruscheck.MainActivity
 import com.madinaappstudio.viruscheck.databinding.FragmentRegisterUserBinding
 import com.madinaappstudio.viruscheck.utils.ProgressLoading
 import com.madinaappstudio.viruscheck.utils.SharedPreference
 import com.madinaappstudio.viruscheck.utils.USER_NODE
 import com.madinaappstudio.viruscheck.utils.generateUUID
+import com.madinaappstudio.viruscheck.utils.setLog
 import com.madinaappstudio.viruscheck.utils.showToast
 
 class RegisterUserFragment : Fragment() {
@@ -33,6 +35,7 @@ class RegisterUserFragment : Fragment() {
 
         val userId = generateUUID()
         val progressLoading = ProgressLoading(requireContext())
+        val preference = SharedPreference(requireContext())
 
         binding.btnRegisterUser.setOnClickListener {
             val name = binding.etRegisterUserName.text.toString().trim()
@@ -41,11 +44,11 @@ class RegisterUserFragment : Fragment() {
                 Firebase.firestore.collection(USER_NODE).document(userId)
                     .set(mapOf("userId" to userId, "name" to name))
                     .addOnSuccessListener {
-                        SharedPreference(requireContext())
-                            .saveUserSession(true, userId, name)
+                        preference.saveUserSession(true, userId, name)
+                        progressLoading.hide()
                         showToast(requireContext(), "Success")
                         startActivity(Intent(requireContext(), HomeActivity::class.java))
-                        requireActivity().finishAffinity()
+                        requireActivity().finish()
                     }
                     .addOnFailureListener {
                         progressLoading.hide()
