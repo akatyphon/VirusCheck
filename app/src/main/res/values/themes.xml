@@ -8,4 +8,10 @@
 
     <style name="Theme.VirusCheck" parent="Base.Theme.VirusCheck"/>
 
+    <style name="Theme.VirusCheck.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#43ADFF</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/app_logo</item>
+        <item name="postSplashScreenTheme">@style/Theme.VirusCheck</item>
+    </style>
+
 </resources>

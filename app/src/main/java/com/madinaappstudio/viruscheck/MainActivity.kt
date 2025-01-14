@@ -2,43 +2,41 @@ package com.madinaappstudio.viruscheck
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.Fragment
 import com.madinaappstudio.viruscheck.databinding.ActivityMainBinding
+import com.madinaappstudio.viruscheck.models.SplashViewModel
 import com.madinaappstudio.viruscheck.onboarding.RegisterUserFragment
 import com.madinaappstudio.viruscheck.onboarding.VerifyUserFragment
-import com.madinaappstudio.viruscheck.utils.ProgressLoading
 import com.madinaappstudio.viruscheck.utils.SharedPreference
 
 class MainActivity : AppCompatActivity(), VerifyUserFragment.VerificationListener {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var sharedPreference: SharedPreference
-    private lateinit var progressLoading: ProgressLoading
+    private val splashViewModel: SplashViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
+        installSplashScreen().apply {
+            setKeepOnScreenCondition {
+                splashViewModel.isLoading.value!!
+            }
+        }
         setContentView(binding.root)
-
-        progressLoading = ProgressLoading(this@MainActivity)
         sharedPreference = SharedPreference(this@MainActivity)
-
-        progressLoading.show()
-
-        val isUserLogged = sharedPreference.isUserLoggedIn()
-
-        if (isUserLogged) {
-            Handler(Looper.getMainLooper())
-                .postDelayed({
+        splashViewModel.isLoading.observe(this) { isLoading ->
+            if (!isLoading) {
+                if (sharedPreference.isUserLoggedIn()) {
                     startActivity(Intent(this@MainActivity, HomeActivity::class.java))
                     finishAffinity()
-                }, 1000)
-        } else {
-            progressLoading.hide()
-            loadFragment(VerifyUserFragment())
+                } else {
+                    loadFragment(VerifyUserFragment())
+                }
+            }
         }
 
     }
