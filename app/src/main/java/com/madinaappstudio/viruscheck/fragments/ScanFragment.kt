@@ -119,12 +119,12 @@ class ScanFragment : Fragment() {
             ) {
                 val response = p1.body()
                 if (response != null) {
-                    loadingDialog.setText("Analyzing file...", "This may take long, please wait...")
+                    loadingDialog.setText("Analyzing file...", "This may take 40 - 45 sec, please wait...")
                     val sha256 = getSHA256(file)
                     val handler = Handler(Looper.getMainLooper())
                     handler.postDelayed({
                         getFileReport(sha256)
-                    }, 5000)
+                    }, 50000)
 
                 } else {
                     loadingDialog.hide()
@@ -151,14 +151,15 @@ class ScanFragment : Fragment() {
             ) {
                 val response = p1.body()
                 if (response != null) {
-                    val action = ScanFragmentDirections.actionScanToScanResult(
-                        ScanResultType(fileReportResponse = response)
-                    )
-                    findNavController().navigate(action)
                     loadingDialog.makeSuccessView(true)
                     Handler(Looper.getMainLooper()).postDelayed({
                         loadingDialog.hide()
-                    }, 2000)
+                        val action = ScanFragmentDirections.actionScanToScanResult(
+                            ScanResultType(fileReportResponse = response)
+                        )
+                        findNavController().navigate(action)
+                    }, 1500)
+
                 } else {
                     loadingDialog.hide()
                     showAnalyzeFailure()
@@ -218,14 +219,14 @@ class ScanFragment : Fragment() {
             ) {
                 val body = p1.body()
                 if (body != null) {
-                    val action = ScanFragmentDirections.actionScanToScanResult(
-                        ScanResultType(urlScanReportResponse = body)
-                    )
-                    findNavController().navigate(action)
                     loadingDialog.makeSuccessView(false)
                     Handler(Looper.getMainLooper()).postDelayed({
                         loadingDialog.hide()
-                    }, 2000)
+                        val action = ScanFragmentDirections.actionScanToScanResult(
+                            ScanResultType(urlScanReportResponse = body)
+                        )
+                        findNavController().navigate(action)
+                    }, 1500)
                 } else {
                     loadingDialog.hide()
                     showAnalyzeFailure()
