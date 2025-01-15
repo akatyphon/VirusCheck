@@ -35,7 +35,7 @@ class LoadingDialog(private val context: Context) {
         setView(binding.root)
         setCancelable(false)
         window?.setBackgroundDrawableResource(android.R.color.transparent)
-        window?.setDimAmount(1f)
+        window?.setDimAmount(.8f)
     }
 
     fun show() {
@@ -86,14 +86,14 @@ fun generateUUID(): String {
             Build.USER.length % 10
 }
 
-class ProgressLoading(context: Context) {
+class ProgressLoading(context: Context, dimAmount: Float = .7f) {
     private val dialogView = LayoutInflater.from(context)
         .inflate(R.layout.dialog_progress_loading, null)
     private val builder = AlertDialog.Builder(context).create().apply {
         setView(dialogView)
         setCancelable(false)
         window?.setBackgroundDrawableResource(android.R.color.transparent)
-        window?.setDimAmount(.7f)
+        window?.setDimAmount(dimAmount)
     }
 
     val width = (context.resources.displayMetrics.widthPixels * 0.50)

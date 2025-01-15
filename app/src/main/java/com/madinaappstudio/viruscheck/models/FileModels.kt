@@ -48,7 +48,7 @@ data class FileAttributes(
     @SerializedName("times_submitted") val timesSubmitted: Int? = null,
     @SerializedName("last_submission_date") val lastSubmissionDate: Long,
     val magiks: String? = null,
-    @SerializedName("type_extension") val typeExtension: String? = null,
+    @SerializedName("type_extension") val typeExtension: String,
     @SerializedName("last_analysis_date") val lastAnalysisDate: Long,
     @SerializedName("type_tag") val typeTag: String? = null,
     val reputation: Int? = null,
