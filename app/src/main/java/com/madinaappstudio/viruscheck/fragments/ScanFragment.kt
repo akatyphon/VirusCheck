@@ -24,18 +24,9 @@ import com.madinaappstudio.viruscheck.models.UrlScanReportResponse
 import com.madinaappstudio.viruscheck.models.UrlScanResponse
 import com.madinaappstudio.viruscheck.utils.LoadingDialog
 import com.madinaappstudio.viruscheck.utils.getVirusApi
-import com.madinaappstudio.viruscheck.utils.setLog
 import com.madinaappstudio.viruscheck.utils.showToast
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
-import okhttp3.MediaType
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Call
@@ -44,7 +35,6 @@ import retrofit2.Response
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
-import java.net.URL
 import java.net.URLEncoder
 import java.security.MessageDigest
 import java.util.Base64
@@ -92,14 +82,26 @@ class ScanFragment : Fragment() {
             }
         }
 
-        binding.mtScanToolbar.setOnMenuItemClickListener { menuItem ->
-            val itemId = menuItem.itemId
-            if (itemId == R.id.btnScanMenuHistory) {
-                showToast(requireContext(), "work in progress")
+        binding.mtScanToolbar.setOnMenuItemClickListener {
+            val itemId = it.itemId
+
+            when (itemId) {
+                R.id.btnScanMenuHistory -> {
+                    showHistoryDialog()
+                    true
+                }
+
+                else -> {
+                    false
+                }
             }
-            true
         }
 
+    }
+
+    private fun showHistoryDialog() {
+        val historyFragment = HistoryDialogFragment.newInstance()
+        historyFragment.show(requireActivity().supportFragmentManager, null)
     }
 
     private fun isValidUrl(url: String): Boolean {
@@ -119,7 +121,10 @@ class ScanFragment : Fragment() {
             ) {
                 val response = p1.body()
                 if (response != null) {
-                    loadingDialog.setText("Analyzing file...", "This may take 40 - 45 sec, please wait...")
+                    loadingDialog.setText(
+                        "Analyzing file...",
+                        "This may take 40 - 45 sec, please wait..."
+                    )
                     val sha256 = getSHA256(file)
                     val handler = Handler(Looper.getMainLooper())
                     handler.postDelayed({
@@ -208,9 +213,9 @@ class ScanFragment : Fragment() {
         })
     }
 
-    private fun getUrlReport(analysisId: String) {
+    private fun getUrlReport(urlBase64: String) {
 
-        val call = RetrofitService.service.getUrlReport(analysisId, apiKey)
+        val call = RetrofitService.service.getUrlReport(urlBase64, apiKey)
 
         call.enqueue(object : Callback<UrlScanReportResponse> {
             override fun onResponse(

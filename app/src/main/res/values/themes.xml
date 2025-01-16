@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
     <style name="Base.Theme.VirusCheck" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
@@ -6,12 +6,17 @@
         <!-- Inline ColorStateList for BottomNavigationView -->
     </style>
 
-    <style name="Theme.VirusCheck" parent="Base.Theme.VirusCheck"/>
+    <style name="Theme.VirusCheck" parent="Base.Theme.VirusCheck" />
 
     <style name="Theme.VirusCheck.Splash" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">#43ADFF</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/app_logo</item>
         <item name="postSplashScreenTheme">@style/Theme.VirusCheck</item>
+    </style>
+
+    <style name="Theme.VirusCheck.DialogFragment" parent="Theme.VirusCheck">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
     </style>
 
 </resources>
