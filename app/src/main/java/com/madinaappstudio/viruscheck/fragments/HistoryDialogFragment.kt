@@ -5,15 +5,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.navigation
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.madinaappstudio.viruscheck.R
 import com.madinaappstudio.viruscheck.adaptes.HistoryDialogAdapter
+import com.madinaappstudio.viruscheck.database.HistoryDao
+import com.madinaappstudio.viruscheck.database.HistoryDatabase
 import com.madinaappstudio.viruscheck.databinding.FragmentHistoryDialogBinding
+import com.madinaappstudio.viruscheck.models.HistoryViewModel
+import com.madinaappstudio.viruscheck.utils.setLog
 
-class HistoryDialogFragment : DialogFragment() {
+class HistoryDialogFragment : DialogFragment(), HistoryDialogAdapter.OnHistoryClickListener {
 
     private var _binding: FragmentHistoryDialogBinding? = null
     private val binding get() = _binding!!
+    private lateinit var historyViewModel: HistoryViewModel
+    private lateinit var adapter: HistoryDialogAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,37 +43,79 @@ class HistoryDialogFragment : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.tbHistoryNavIcon.setNavigationOnClickListener {
-            val dialog = dialog
-            if (dialog != null) {
-                if (dialog.isShowing) {
-                    dialog.dismiss()
+            findNavController().popBackStack()
+        }
+
+        binding.tbHistoryNavIcon.setOnMenuItemClickListener {
+            val itemId = it.itemId
+
+            when(itemId){
+                R.id.btnHistoryTDeleteAll -> {
+                    historyDeleteConfirmation()
+                    true
                 }
+                R.id.btnHistoryTMenuInfo -> {
+                    showInfoDialog()
+                    true
+                }
+                else -> false
             }
         }
 
-        val list = listOf(
-            "file name 1",
-            "file name 2",
-            "example.com 3",
-            "example.com 4",
-            "file name 5",
-            "example.com 6",
-            "file name 7",
-            "file name 8",
-            "url address 9",
-            "file name 10",
-            "file name 11"
+        val historyDao: HistoryDao = HistoryDatabase.getInstance(requireContext()).historyDao()
+        val historyViewModelFactory = HistoryViewModel.HistoryViewModelFactory(historyDao)
+        historyViewModel = viewModels<HistoryViewModel> { historyViewModelFactory }.value
+
+        adapter = HistoryDialogAdapter(mutableListOf(), historyViewModel, this@HistoryDialogFragment)
+        binding.rvHistoryMain.addItemDecoration(
+            DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
         )
 
-        val adapter = HistoryDialogAdapter(list)
         binding.rvHistoryMain.layoutManager = LinearLayoutManager(requireContext())
         binding.rvHistoryMain.adapter = adapter
+
+        historyViewModel.getAllHistory().observe(viewLifecycleOwner) { historyList ->
+            if (historyList != null) {
+                adapter.updateData(historyList)
+            }
+        }
+
+    }
+
+    private fun historyDeleteConfirmation() {
+        val dialog = MaterialAlertDialogBuilder(requireContext()).apply {
+            setMessage("Are you want to delete all history.")
+            setNegativeButton("No"
+            ) { dialog, _ ->
+                dialog.dismiss()
+            }
+            setPositiveButton("yes"
+            ) { dialog, _ ->
+                historyViewModel.deleteAllHistory()
+                adapter.updateData(emptyList())
+                dialog.dismiss()
+            }
+        }
+        dialog.show()
+
+    }
+
+    private fun showInfoDialog() {
+        val dialog = MaterialAlertDialogBuilder(requireContext()).apply {
+            setMessage("All the history records only saved in device.")
+        }
+        dialog.show()
     }
 
     companion object {
         fun newInstance(): HistoryDialogFragment {
             return HistoryDialogFragment()
         }
+    }
+
+    override fun onHistoryClicked(array: Array<String>) {
+        val action = HistoryDialogFragmentDirections.actionHistoryDialogToScan(array)
+        findNavController().navigate(action)
     }
 
 }

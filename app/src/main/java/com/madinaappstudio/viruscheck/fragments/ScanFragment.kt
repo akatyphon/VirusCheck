@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.OpenableColumns
+import android.text.format.Formatter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,18 +13,26 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.madinaappstudio.viruscheck.R
 import com.madinaappstudio.viruscheck.api.RetrofitService
+import com.madinaappstudio.viruscheck.database.HistoryDao
+import com.madinaappstudio.viruscheck.database.HistoryDatabase
+import com.madinaappstudio.viruscheck.database.HistoryEntity
 import com.madinaappstudio.viruscheck.databinding.FragmentScanBinding
 import com.madinaappstudio.viruscheck.models.FileReportResponse
 import com.madinaappstudio.viruscheck.models.FileUploadResponse
+import com.madinaappstudio.viruscheck.models.HistoryViewModel
 import com.madinaappstudio.viruscheck.models.ScanResultType
 import com.madinaappstudio.viruscheck.models.UrlScanReportResponse
 import com.madinaappstudio.viruscheck.models.UrlScanResponse
 import com.madinaappstudio.viruscheck.utils.LoadingDialog
+import com.madinaappstudio.viruscheck.utils.ProgressLoading
 import com.madinaappstudio.viruscheck.utils.getVirusApi
+import com.madinaappstudio.viruscheck.utils.setLog
 import com.madinaappstudio.viruscheck.utils.showToast
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -46,6 +55,7 @@ class ScanFragment : Fragment() {
     private var launcher: ActivityResultLauncher<String>? = null
     private lateinit var loadingDialog: LoadingDialog
     private val apiKey = getVirusApi()
+    private lateinit var historyViewModel: HistoryViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -68,6 +78,25 @@ class ScanFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         loadingDialog = LoadingDialog(requireContext())
+
+        val args = ScanFragmentArgs.fromBundle(requireArguments())
+        val isFromHistory = args.isFromHistory
+
+        if (isFromHistory != null && isFromHistory.size >= 2) {
+            val type = isFromHistory[0]
+            val scanId = isFromHistory[1]
+
+            if (type == "file") {
+                getFileReport(scanId, true)
+            } else {
+                getUrlReport(scanId, true)
+            }
+        }
+
+
+        val historyDao: HistoryDao = HistoryDatabase.getInstance(requireContext()).historyDao()
+        val historyViewModelFactory = HistoryViewModel.HistoryViewModelFactory(historyDao)
+        historyViewModel = viewModels<HistoryViewModel> { historyViewModelFactory }.value
 
         binding.btnScanFileUpload.setOnClickListener {
             launcher?.launch("*/*")
@@ -100,8 +129,7 @@ class ScanFragment : Fragment() {
     }
 
     private fun showHistoryDialog() {
-        val historyFragment = HistoryDialogFragment.newInstance()
-        historyFragment.show(requireActivity().supportFragmentManager, null)
+        findNavController().navigate(R.id.actionScanToHistory)
     }
 
     private fun isValidUrl(url: String): Boolean {
@@ -110,6 +138,18 @@ class ScanFragment : Fragment() {
     }
 
     private fun scanFile(file: File) {
+        val sha256 = getSHA256(file)
+        val fileSize = Formatter.formatShortFileSize(requireContext(), file.length())
+        historyViewModel.insertHistory(
+            HistoryEntity(
+                type = "file",
+                name = file.name,
+                fileSha256 = sha256,
+                fileSize = fileSize,
+                date = System.currentTimeMillis()
+            )
+        )
+
         val requestBody = file.asRequestBody("multipart/form-data".toMediaTypeOrNull())
         val multipartBody = MultipartBody.Part.createFormData("file", file.name, requestBody)
 
@@ -125,7 +165,6 @@ class ScanFragment : Fragment() {
                         "Analyzing file...",
                         "This may take 40 - 45 sec, please wait..."
                     )
-                    val sha256 = getSHA256(file)
                     val handler = Handler(Looper.getMainLooper())
                     handler.postDelayed({
                         getFileReport(sha256)
@@ -145,7 +184,9 @@ class ScanFragment : Fragment() {
         })
     }
 
-    private fun getFileReport(sha256: String) {
+    private fun getFileReport(sha256: String, isHistory: Boolean = false) {
+        val progressLoading = ProgressLoading(requireContext())
+        if (isHistory) progressLoading.show()
 
         val call = RetrofitService.service.getFileReport(sha256, apiKey)
 
@@ -159,6 +200,7 @@ class ScanFragment : Fragment() {
                     loadingDialog.makeSuccessView(true)
                     Handler(Looper.getMainLooper()).postDelayed({
                         loadingDialog.hide()
+                        if (isHistory) progressLoading.hide()
                         val action = ScanFragmentDirections.actionScanToScanResult(
                             ScanResultType(fileReportResponse = response)
                         )
@@ -181,6 +223,16 @@ class ScanFragment : Fragment() {
 
     private fun scanUrl(url: String) {
 
+        val urlBase64 = getBase64(url)
+        historyViewModel.insertHistory(
+            HistoryEntity(
+                type = "url",
+                name = url,
+                urlBase64 = urlBase64,
+                date = System.currentTimeMillis()
+            )
+        )
+
         loadingDialog.show()
         loadingDialog.setText("Analyzing url...", "This may take long, please wait...")
 
@@ -195,7 +247,6 @@ class ScanFragment : Fragment() {
                 val body = p1.body()
                 if (body != null) {
                     val handler = Handler(Looper.getMainLooper())
-                    val urlBase64 = getBase64(url)
                     handler.postDelayed({
                         getUrlReport(urlBase64)
                     }, 5000)
@@ -213,7 +264,10 @@ class ScanFragment : Fragment() {
         })
     }
 
-    private fun getUrlReport(urlBase64: String) {
+    private fun getUrlReport(urlBase64: String, isHistory: Boolean = false) {
+        val progressLoading = ProgressLoading(requireContext())
+        if (isHistory) progressLoading.show()
+
 
         val call = RetrofitService.service.getUrlReport(urlBase64, apiKey)
 
@@ -227,6 +281,7 @@ class ScanFragment : Fragment() {
                     loadingDialog.makeSuccessView(false)
                     Handler(Looper.getMainLooper()).postDelayed({
                         loadingDialog.hide()
+                        if (isHistory) progressLoading.hide()
                         val action = ScanFragmentDirections.actionScanToScanResult(
                             ScanResultType(urlScanReportResponse = body)
                         )
@@ -246,7 +301,7 @@ class ScanFragment : Fragment() {
         })
     }
 
-    fun getBase64(url: String): String {
+    private fun getBase64(url: String): String {
         val base64Encoded =
             Base64.getUrlEncoder().withoutPadding().encodeToString(url.toByteArray(Charsets.UTF_8))
         return base64Encoded
@@ -276,7 +331,7 @@ class ScanFragment : Fragment() {
         return name.ifEmpty { lastPathSegment ?: "${System.currentTimeMillis()}" }
     }
 
-    fun getSHA256(file: File): String {
+    private fun getSHA256(file: File): String {
         val digest = MessageDigest.getInstance("SHA-256")
         FileInputStream(file).use { inputStream ->
             val buffer = ByteArray(1024)

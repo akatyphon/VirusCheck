@@ -14,6 +14,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:navigationIcon="@drawable/ic_close"
+            app:menu="@menu/top_menu_history"
             app:title="Scanned History" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

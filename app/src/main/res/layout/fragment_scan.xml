@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:menu="@menu/top_menu_scan"
-            app:navigationIcon="@drawable/ic_dev"
+            app:navigationIcon="@drawable/app_logo_32"
             app:title="@string/app_name" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

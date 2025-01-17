@@ -4,10 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedDispatcher
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.getField
 import com.madinaappstudio.viruscheck.R
@@ -18,11 +21,9 @@ import com.madinaappstudio.viruscheck.models.UrlScanReportResponse
 import com.madinaappstudio.viruscheck.utils.SharedPreference
 import com.madinaappstudio.viruscheck.utils.USER_NODE
 import com.madinaappstudio.viruscheck.utils.setLog
-import com.madinaappstudio.viruscheck.utils.showToast
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 
 class ScanResultFragment : Fragment() {
@@ -47,7 +48,7 @@ class ScanResultFragment : Fragment() {
         preference = SharedPreference(requireContext())
 
         binding.mtScanResultToolbar.setNavigationOnClickListener {
-            findNavController().popBackStack()
+            findNavController().navigate(R.id.actionScanResultToScan, Bundle())
         }
 
         if (scanReport.fileReportResponse != null) {
@@ -79,6 +80,10 @@ class ScanResultFragment : Fragment() {
             }
             binding.mtScanResultToolbar.title = "URL Scan Result"
             bindUrlData(scanReport.urlScanReportResponse)
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            findNavController().navigate(R.id.actionScanResultToScan, Bundle())
         }
 
     }
@@ -164,36 +169,21 @@ class ScanResultFragment : Fragment() {
     }
 
     private fun formatDate(second: Long): String {
-        val formatter = DateTimeFormatter.ofPattern("dd-MM-yyy").withZone(ZoneId.systemDefault())
+        val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy").withZone(ZoneId.systemDefault())
         return formatter.format(Instant.ofEpochSecond(second))
-    }
-
-    private fun convertToSize(byte: Long): String {
-        return when {
-            byte <= 1024.0 -> {
-                "$byte KB"
-            }
-
-            byte in 1024..1048576 -> {
-                String.format(Locale.getDefault(), "%.2f KB", byte / 1024.0)
-            }
-
-            else -> {
-                String.format(Locale.getDefault(), "%.2f MB", byte / (1024.0 * 1024.0))
-            }
-        }
     }
 
     private fun saveStats(currentStats: StatsModel){
         Firebase.firestore.collection(USER_NODE).document(preference.getUserId()!!).get()
             .addOnSuccessListener {
                 val oldStats = it.getField<StatsModel>("stats")
+                setLog(oldStats)
                 val newStats: StatsModel = if (oldStats != null){
                     mergeStatsModels(currentStats, oldStats)
                 } else {
                     currentStats
                 }
-                Firebase.firestore.collection(USER_NODE).document(preference.getUserId()!!).set(
+                Firebase.firestore.collection(USER_NODE).document(preference.getUserId()!!).update(
                     mapOf("stats" to newStats)
                 )
             }
@@ -208,6 +198,7 @@ class ScanResultFragment : Fragment() {
             clean = model1.clean + model2.clean,
             malicious = model1.malicious + model2.malicious,
             suspicious = model1.suspicious + model2.suspicious,
+            file = model1.file + model2.file,
             url = model1.url + model2.url,
             apk = model1.apk + model2.apk,
             exe = model1.exe + model2.exe,
@@ -221,6 +212,7 @@ class ScanResultFragment : Fragment() {
     private fun getStatsModel(fileType: String, status: Int) : StatsModel {
         val statsModel = StatsModel()
         statsModel.totalScan = 1
+        statsModel.file = 1
         when(fileType){
             "apk" -> {
                 statsModel.apk = 1

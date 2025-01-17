@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/btnHistoryMenuDetails"
+        android:title="View Details" />
+    <item android:id="@+id/btnHistoryMenuDelete"
+        android:title="Delete" />
+</menu>

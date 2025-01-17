@@ -14,6 +14,7 @@ import com.madinaappstudio.viruscheck.R
 import com.madinaappstudio.viruscheck.databinding.DialogScanLoadingBinding
 
 const val USER_NODE = "USERS"
+const val DATABASE_NAME = "AppDatabase"
 
 fun getVirusApi(): String {
     return BuildConfig.API_KEY

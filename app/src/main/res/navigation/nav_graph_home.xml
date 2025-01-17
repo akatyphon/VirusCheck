@@ -15,6 +15,16 @@
             android:id="@+id/actionScanToScanResult"
             app:destination="@id/graphScanResultFragment"/>
 
+        <action
+            android:id="@+id/actionScanToHistory"
+            app:destination="@id/graphHistoryDialogFragment"/>
+
+        <argument
+            android:name="isFromHistory"
+            app:argType="string[]"
+            app:nullable="true"
+            android:defaultValue="@null"/>
+
     </fragment>
 
     <fragment
@@ -39,6 +49,22 @@
             android:name="scanReport"
             app:argType="com.madinaappstudio.viruscheck.models.ScanResultType"/>
 
+        <action
+            android:id="@+id/actionScanResultToScan"
+            app:destination="@id/graphScanFragment"/>
+
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/graphHistoryDialogFragment"
+        android:name="com.madinaappstudio.viruscheck.fragments.HistoryDialogFragment"
+        android:label="HistoryDialogFragment"
+        tools:layout="@layout/fragment_history_dialog">
+
+        <action
+            android:id="@+id/actionHistoryDialogToScan"
+            app:destination="@id/graphScanFragment" />
     </fragment>
 
 </navigation>
