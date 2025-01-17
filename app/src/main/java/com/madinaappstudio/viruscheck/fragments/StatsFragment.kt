@@ -36,6 +36,7 @@ class StatsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         progressLoading = ProgressLoading(requireContext(), 0.9f)
+        progressLoading.show()
         loadStatsData()
     }
 
