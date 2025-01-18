@@ -163,12 +163,12 @@ class ScanFragment : Fragment() {
                 if (response != null) {
                     loadingDialog.setText(
                         "Analyzing file...",
-                        "This may take 40 - 45 sec, please wait..."
+                        "This may take around 1 min, please wait..."
                     )
                     val handler = Handler(Looper.getMainLooper())
                     handler.postDelayed({
                         getFileReport(sha256)
-                    }, 50000)
+                    }, 60000)
 
                 } else {
                     loadingDialog.hide()
@@ -208,12 +208,14 @@ class ScanFragment : Fragment() {
                     }, 1500)
 
                 } else {
+                    if (isHistory) progressLoading.hide()
                     loadingDialog.hide()
                     showAnalyzeFailure()
                 }
             }
 
             override fun onFailure(p0: Call<FileReportResponse>, p1: Throwable) {
+                if (isHistory) progressLoading.hide()
                 loadingDialog.hide()
                 showToast(requireContext(), p1.localizedMessage, Toast.LENGTH_LONG)
             }
@@ -234,7 +236,7 @@ class ScanFragment : Fragment() {
         )
 
         loadingDialog.show()
-        loadingDialog.setText("Analyzing url...", "This may take long, please wait...")
+        loadingDialog.setText("Analyzing url...", "This may take 15 sec, please wait...")
 
         val encodedUrl = "url=${URLEncoder.encode(url, "UTF-8")}"
         val requestBody =
@@ -249,7 +251,7 @@ class ScanFragment : Fragment() {
                     val handler = Handler(Looper.getMainLooper())
                     handler.postDelayed({
                         getUrlReport(urlBase64)
-                    }, 5000)
+                    }, 15000)
                 } else {
                     loadingDialog.hide()
                     showAnalyzeFailure()
@@ -288,12 +290,14 @@ class ScanFragment : Fragment() {
                         findNavController().navigate(action)
                     }, 1500)
                 } else {
+                    if (isHistory) progressLoading.hide()
                     loadingDialog.hide()
                     showAnalyzeFailure()
                 }
             }
 
             override fun onFailure(p0: Call<UrlScanReportResponse>, p1: Throwable) {
+                if (isHistory) progressLoading.hide()
                 loadingDialog.hide()
                 showToast(requireContext(), p1.localizedMessage, Toast.LENGTH_LONG)
             }
