@@ -175,7 +175,6 @@ class ScanResultFragment : Fragment() {
         Firebase.firestore.collection(USER_NODE).document(preference.getUserId()!!).get()
             .addOnSuccessListener {
                 val oldStats = it.getField<StatsModel>("stats")
-                setLog(oldStats)
                 val newStats: StatsModel = if (oldStats != null){
                     mergeStatsModels(currentStats, oldStats)
                 } else {

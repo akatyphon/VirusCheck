@@ -1,5 +1,6 @@
 package com.madinaappstudio.viruscheck.api
 
+import com.madinaappstudio.viruscheck.models.AnalysesModel
 import com.madinaappstudio.viruscheck.models.FileReportResponse
 import com.madinaappstudio.viruscheck.models.FileUploadResponse
 import com.madinaappstudio.viruscheck.models.UrlScanReportResponse
@@ -7,6 +8,7 @@ import com.madinaappstudio.viruscheck.models.UrlScanResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -42,5 +44,11 @@ interface RetrofitInterface {
         @Path("id") id: String,
         @Header("x-apikey") apiKey: String
     ): Call<UrlScanReportResponse>
+
+    @GET("analyses/{id}")
+    fun getAnalyses(
+        @Path("id") id: String,
+        @Header("x-apikey") apiKey: String
+    ): Call<AnalysesModel>
 
 }

@@ -28,49 +28,6 @@ fun setLog(msg: Any?) {
     Log.d("VirusCheck-Log", "setLog: ${msg}")
 }
 
-class LoadingDialog(private val context: Context) {
-
-    private val binding = DialogScanLoadingBinding.inflate(LayoutInflater.from(context))
-
-    private val builder = AlertDialog.Builder(context).create().apply {
-        setView(binding.root)
-        setCancelable(false)
-        window?.setBackgroundDrawableResource(android.R.color.transparent)
-        window?.setDimAmount(.8f)
-    }
-
-    fun show() {
-        builder.show()
-        builder.window?.setLayout(
-            (context.resources.displayMetrics.widthPixels * 0.80).toInt(),
-            WindowManager.LayoutParams.WRAP_CONTENT
-        )
-    }
-
-    fun hide() {
-        if (builder.isShowing) builder.hide()
-    }
-
-    fun setText(status: String, msg: String) {
-        binding.tvDialogStatus.text = status
-        binding.tvDialogMsg.text = msg
-    }
-
-    fun makeSuccessView(isFile: Boolean) {
-        binding.pbDialogProgressC.visibility = View.GONE
-        binding.ivDialogSuccess.visibility = View.VISIBLE
-        binding.tvDialogStatus.text = "Scan Completed"
-        binding.tvDialogStatus.setTypeface(null, Typeface.BOLD)
-        binding.pbDialogProgressH.visibility = View.GONE
-        if (isFile){
-            binding.tvDialogMsg.text = "File have been successfully analyzed"
-        } else {
-            binding.tvDialogMsg.text = "URL have been successfully analyzed"
-        }
-    }
-
-}
-
 fun generateUUID(): String {
     return "35" +
             Build.BOARD.length % 10 +

@@ -16,8 +16,8 @@ data class UrlScanReportResponse(
 
 @Parcelize
 data class UrlData(
-    val type: String? = null,
-    val id: String? = null,
+    val type: String,
+    val id: String,
     @SerializedName("links") val urlLinks: UrlLinks,
     @SerializedName("attributes") val urlAttributes: UrlAttributes? = null
 ) : Parcelable

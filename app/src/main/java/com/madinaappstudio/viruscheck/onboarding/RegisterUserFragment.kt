@@ -15,7 +15,6 @@ import com.madinaappstudio.viruscheck.utils.ProgressLoading
 import com.madinaappstudio.viruscheck.utils.SharedPreference
 import com.madinaappstudio.viruscheck.utils.USER_NODE
 import com.madinaappstudio.viruscheck.utils.generateUUID
-import com.madinaappstudio.viruscheck.utils.setLog
 import com.madinaappstudio.viruscheck.utils.showToast
 
 class RegisterUserFragment : Fragment() {

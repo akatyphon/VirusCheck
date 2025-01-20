@@ -1,5 +1,7 @@
 package com.madinaappstudio.viruscheck.fragments
 
+import android.content.Context
+import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -9,31 +11,38 @@ import android.text.format.Formatter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.madinaappstudio.viruscheck.R
 import com.madinaappstudio.viruscheck.api.RetrofitService
 import com.madinaappstudio.viruscheck.database.HistoryDao
 import com.madinaappstudio.viruscheck.database.HistoryDatabase
 import com.madinaappstudio.viruscheck.database.HistoryEntity
+import com.madinaappstudio.viruscheck.databinding.DialogScanLoadingBinding
 import com.madinaappstudio.viruscheck.databinding.FragmentScanBinding
+import com.madinaappstudio.viruscheck.models.AnalysesModel
 import com.madinaappstudio.viruscheck.models.FileReportResponse
 import com.madinaappstudio.viruscheck.models.FileUploadResponse
 import com.madinaappstudio.viruscheck.models.HistoryViewModel
 import com.madinaappstudio.viruscheck.models.ScanResultType
 import com.madinaappstudio.viruscheck.models.UrlScanReportResponse
 import com.madinaappstudio.viruscheck.models.UrlScanResponse
-import com.madinaappstudio.viruscheck.utils.LoadingDialog
 import com.madinaappstudio.viruscheck.utils.ProgressLoading
 import com.madinaappstudio.viruscheck.utils.getVirusApi
 import com.madinaappstudio.viruscheck.utils.setLog
 import com.madinaappstudio.viruscheck.utils.showToast
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Runnable
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -56,6 +65,8 @@ class ScanFragment : Fragment() {
     private lateinit var loadingDialog: LoadingDialog
     private val apiKey = getVirusApi()
     private lateinit var historyViewModel: HistoryViewModel
+    private lateinit var handler: Handler
+    private lateinit var pollingRunnable: Runnable
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -64,7 +75,7 @@ class ScanFragment : Fragment() {
         launcher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
             if (uri != null) {
                 loadingDialog.show()
-                loadingDialog.setText("Uploading file...", "This won't take long!")
+                loadingDialog.setText("Uploading file...", "This won't take long, please wait...")
                 scanFile(uri.toFile())
             } else {
                 showToast(requireContext(), "Operation cancelled by user")
@@ -78,6 +89,7 @@ class ScanFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         loadingDialog = LoadingDialog(requireContext())
+        handler = Handler(Looper.getMainLooper())
 
         val args = ScanFragmentArgs.fromBundle(requireArguments())
         val isFromHistory = args.isFromHistory
@@ -140,6 +152,7 @@ class ScanFragment : Fragment() {
     private fun scanFile(file: File) {
         val sha256 = getSHA256(file)
         val fileSize = Formatter.formatShortFileSize(requireContext(), file.length())
+
         historyViewModel.insertHistory(
             HistoryEntity(
                 type = "file",
@@ -159,20 +172,12 @@ class ScanFragment : Fragment() {
             override fun onResponse(
                 p0: Call<FileUploadResponse>, p1: Response<FileUploadResponse>
             ) {
-                val response = p1.body()
-                if (response != null) {
-                    loadingDialog.setText(
-                        "Analyzing file...",
-                        "This may take around 1 min, please wait..."
-                    )
-                    val handler = Handler(Looper.getMainLooper())
-                    handler.postDelayed({
-                        getFileReport(sha256)
-                    }, 60000)
-
+                val body = p1.body()
+                if (body != null) {
+                    runPolling(isFile = true, scanId = body.fileData.id, sha256 = sha256)
                 } else {
                     loadingDialog.hide()
-                    showAnalyzeFailure()
+                    showToast(requireContext(), "Something went wrong! try again later")
                 }
             }
 
@@ -236,7 +241,7 @@ class ScanFragment : Fragment() {
         )
 
         loadingDialog.show()
-        loadingDialog.setText("Analyzing url...", "This may take 15 sec, please wait...")
+        loadingDialog.setText("Sending request", "This won't take long, please wait...")
 
         val encodedUrl = "url=${URLEncoder.encode(url, "UTF-8")}"
         val requestBody =
@@ -248,13 +253,10 @@ class ScanFragment : Fragment() {
             override fun onResponse(p0: Call<UrlScanResponse>, p1: Response<UrlScanResponse>) {
                 val body = p1.body()
                 if (body != null) {
-                    val handler = Handler(Looper.getMainLooper())
-                    handler.postDelayed({
-                        getUrlReport(urlBase64)
-                    }, 15000)
+                    runPolling(isFile = false, scanId = body.urlData.id, urlBase64 = urlBase64)
                 } else {
                     loadingDialog.hide()
-                    showAnalyzeFailure()
+                    showToast(requireContext(), "Something went wrong! try again later")
                 }
             }
 
@@ -269,7 +271,6 @@ class ScanFragment : Fragment() {
     private fun getUrlReport(urlBase64: String, isHistory: Boolean = false) {
         val progressLoading = ProgressLoading(requireContext())
         if (isHistory) progressLoading.show()
-
 
         val call = RetrofitService.service.getUrlReport(urlBase64, apiKey)
 
@@ -355,10 +356,109 @@ class ScanFragment : Fragment() {
                 dialog.dismiss()
             }
             setPositiveButton("Go History") { dialog, _ ->
-                showToast(requireContext(), "Going to history")
+                findNavController().navigate(R.id.actionScanToHistory)
                 dialog.dismiss()
             }
         }.show()
+
+    }
+
+    inner class LoadingDialog(private val context: Context) {
+
+        private val binding = DialogScanLoadingBinding.inflate(LayoutInflater.from(context))
+
+        private val builder = AlertDialog.Builder(context).create().apply {
+            setView(binding.root)
+            setCancelable(false)
+            window?.setBackgroundDrawableResource(android.R.color.transparent)
+            window?.setDimAmount(.8f)
+        }
+
+        fun show() {
+            builder.show()
+            builder.window?.setLayout(
+                (context.resources.displayMetrics.widthPixels * 0.80).toInt(),
+                WindowManager.LayoutParams.WRAP_CONTENT
+            )
+            binding.btDialogCancel.setOnClickListener {
+                handler.removeCallbacks(pollingRunnable)
+                hide()
+            }
+        }
+
+        fun hide() {
+            if (builder.isShowing) builder.hide()
+        }
+
+        fun setText(status: String, msg: String) {
+            binding.tvDialogStatus.text = status
+            binding.tvDialogMsg.text = msg
+        }
+
+        fun makeSuccessView(isFile: Boolean) {
+            binding.btDialogCancel.visibility = View.GONE
+            binding.pbDialogProgressC.visibility = View.GONE
+            binding.ivDialogSuccess.visibility = View.VISIBLE
+            binding.tvDialogStatus.text = "Scan Completed"
+            binding.tvDialogStatus.setTypeface(null, Typeface.BOLD)
+            binding.pbDialogProgressH.visibility = View.GONE
+            if (isFile) {
+                binding.tvDialogMsg.text = "File have been successfully analyzed"
+            } else {
+                binding.tvDialogMsg.text = "URL have been successfully analyzed"
+            }
+        }
+
+
+    }
+
+    private fun runPolling(isFile: Boolean, scanId: String, sha256: String? = null, urlBase64: String? = null) {
+        var attempt = 1
+        val maxAttempt = 3
+        var duration = 10000L
+        pollingRunnable = Runnable {
+            if (attempt > maxAttempt) {
+                loadingDialog.setText("Timeout", "Taking longer than expected. Try again from history")
+                CoroutineScope(Dispatchers.Main).launch{
+                    delay(2000)
+                    handler.removeCallbacks(pollingRunnable)
+                    loadingDialog.hide()
+                    return@launch
+                }
+            }
+            val analysisCall = RetrofitService.service.getAnalyses(scanId, apiKey)
+            analysisCall.enqueue(object : Callback<AnalysesModel> {
+                override fun onResponse(
+                    call: Call<AnalysesModel>,
+                    response: Response<AnalysesModel>
+                ) {
+                    val analysesModel = response.body()
+                    if (analysesModel != null) {
+                        val status = analysesModel.getData().attributes.status
+                        if (status == "completed") {
+                            handler.removeCallbacks(pollingRunnable)
+                            if (isFile) getFileReport(sha256!!) else getUrlReport(urlBase64!!)
+                        } else {
+                            loadingDialog.setText(
+                                "Analysis In Queue",
+                                "Your ${if (isFile) "File" else "Url"} is queued for analysis. This may take several seconds, Please wait..."
+                            )
+                            attempt++
+                            duration += 20000L
+                            handler.postDelayed(pollingRunnable, duration)
+                        }
+                    } else {
+                        loadingDialog.hide()
+                        showToast(requireContext(), "Something went wrong! Try again later.")
+                    }
+                }
+                override fun onFailure(call: Call<AnalysesModel>, t: Throwable) {
+                    loadingDialog.hide()
+                    showToast(requireContext(), t.localizedMessage)
+                }
+            })
+        }
+        handler.postDelayed(pollingRunnable, duration)
 
     }
 

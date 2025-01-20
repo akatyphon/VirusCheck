@@ -17,7 +17,6 @@ import com.madinaappstudio.viruscheck.database.HistoryDao
 import com.madinaappstudio.viruscheck.database.HistoryDatabase
 import com.madinaappstudio.viruscheck.databinding.FragmentHistoryDialogBinding
 import com.madinaappstudio.viruscheck.models.HistoryViewModel
-import com.madinaappstudio.viruscheck.utils.setLog
 
 class HistoryDialogFragment : DialogFragment(), HistoryDialogAdapter.OnHistoryClickListener {
 
