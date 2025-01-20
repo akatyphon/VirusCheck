@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.navigation
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -48,15 +47,17 @@ class HistoryDialogFragment : DialogFragment(), HistoryDialogAdapter.OnHistoryCl
         binding.tbHistoryNavIcon.setOnMenuItemClickListener {
             val itemId = it.itemId
 
-            when(itemId){
+            when (itemId) {
                 R.id.btnHistoryTDeleteAll -> {
                     historyDeleteConfirmation()
                     true
                 }
+
                 R.id.btnHistoryTMenuInfo -> {
                     showInfoDialog()
                     true
                 }
+
                 else -> false
             }
         }
@@ -65,7 +66,8 @@ class HistoryDialogFragment : DialogFragment(), HistoryDialogAdapter.OnHistoryCl
         val historyViewModelFactory = HistoryViewModel.HistoryViewModelFactory(historyDao)
         historyViewModel = viewModels<HistoryViewModel> { historyViewModelFactory }.value
 
-        adapter = HistoryDialogAdapter(mutableListOf(), historyViewModel, this@HistoryDialogFragment)
+        adapter =
+            HistoryDialogAdapter(mutableListOf(), historyViewModel, this@HistoryDialogFragment)
         binding.rvHistoryMain.addItemDecoration(
             DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
         )
@@ -84,11 +86,13 @@ class HistoryDialogFragment : DialogFragment(), HistoryDialogAdapter.OnHistoryCl
     private fun historyDeleteConfirmation() {
         val dialog = MaterialAlertDialogBuilder(requireContext()).apply {
             setMessage("Are you want to delete all history.")
-            setNegativeButton("No"
+            setNegativeButton(
+                "No"
             ) { dialog, _ ->
                 dialog.dismiss()
             }
-            setPositiveButton("yes"
+            setPositiveButton(
+                "yes"
             ) { dialog, _ ->
                 historyViewModel.deleteAllHistory()
                 adapter.updateData(emptyList())

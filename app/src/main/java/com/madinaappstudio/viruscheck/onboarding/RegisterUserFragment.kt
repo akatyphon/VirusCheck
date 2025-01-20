@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import com.madinaappstudio.viruscheck.HomeActivity
-import com.madinaappstudio.viruscheck.MainActivity
 import com.madinaappstudio.viruscheck.databinding.FragmentRegisterUserBinding
 import com.madinaappstudio.viruscheck.utils.ProgressLoading
 import com.madinaappstudio.viruscheck.utils.SharedPreference

@@ -1,6 +1,5 @@
 package com.madinaappstudio.viruscheck.fragments
 
-import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -8,14 +7,12 @@ import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import androidx.fragment.app.Fragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import com.madinaappstudio.viruscheck.BuildConfig
 import com.madinaappstudio.viruscheck.MainActivity
-import com.madinaappstudio.viruscheck.R
 import com.madinaappstudio.viruscheck.databinding.FragmentSettingsBinding
 import com.madinaappstudio.viruscheck.utils.ProgressLoading
 import com.madinaappstudio.viruscheck.utils.SharedPreference
@@ -62,7 +59,8 @@ class SettingsFragment : Fragment() {
         }
 
         binding.btnSettingSC.setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW,
+            val intent = Intent(
+                Intent.ACTION_VIEW,
                 Uri.parse("https://github.com/akatyphon/VirusCheck")
             )
             startActivity(intent)
@@ -124,7 +122,7 @@ class SettingsFragment : Fragment() {
             }
     }
 
-    private fun pendingDialog(){
+    private fun pendingDialog() {
         MaterialAlertDialogBuilder(requireContext()).apply {
             setMessage("This feature currently not implemented!")
             setCancelable(true)

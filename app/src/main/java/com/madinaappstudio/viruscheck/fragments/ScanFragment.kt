@@ -36,7 +36,6 @@ import com.madinaappstudio.viruscheck.models.UrlScanReportResponse
 import com.madinaappstudio.viruscheck.models.UrlScanResponse
 import com.madinaappstudio.viruscheck.utils.ProgressLoading
 import com.madinaappstudio.viruscheck.utils.getVirusApi
-import com.madinaappstudio.viruscheck.utils.setLog
 import com.madinaappstudio.viruscheck.utils.showToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
