@@ -32,20 +32,60 @@ data class UrlAttributes(
     @SerializedName("total_votes") val urlTotalVotes: UrlTotalVotes? = null,
     @SerializedName("redirection_chain") val redirectionChain: List<String>? = null,
     @SerializedName("targeted_brand") val urlTargetedBrand: UrlTargetedBrand? = null,
-    val url: String,
-    @SerializedName("first_submission_date") val firstSubmissionDate: Long,
-    @SerializedName("last_submission_date") val lastSubmissionDate: Long,
+    val url: String? = null,
+    @SerializedName("first_submission_date") val firstSubmissionDate: Long? = null,
+    @SerializedName("last_submission_date") val lastSubmissionDate: Long? = null,
     @SerializedName("last_analysis_results") val lastAnalysisResult: Map<String, UrlEngineResult>? = null,
-    @SerializedName("last_analysis_stats") val lastAnalysisStats: UrlStats,
+    @SerializedName("last_analysis_stats") val lastAnalysisStats: UrlStats? = null,
     @SerializedName("last_modification_date") val lastModificationDate: Long? = null,
     val title: String? = null,
     @SerializedName("times_submitted") val timesSubmitted: Int? = null,
-    @SerializedName("last_analysis_date") val lastAnalysisDate: Long,
+    @SerializedName("last_analysis_date") val lastAnalysisDate: Long? = null,
     val reputation: Int? = null,
     val tld: String? = null
+) : Parcelable {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
 
-) : Parcelable
+        other as UrlAttributes
 
+        if (urlTotalVotes != other.urlTotalVotes) return false
+        if (redirectionChain != other.redirectionChain) return false
+        if (urlTargetedBrand != other.urlTargetedBrand) return false
+        if (url != other.url) return false
+        if (firstSubmissionDate != other.firstSubmissionDate) return false
+        if (lastSubmissionDate != other.lastSubmissionDate) return false
+        if (lastAnalysisResult != other.lastAnalysisResult) return false
+        if (lastAnalysisStats != other.lastAnalysisStats) return false
+        if (lastModificationDate != other.lastModificationDate) return false
+        if (title != other.title) return false
+        if (timesSubmitted != other.timesSubmitted) return false
+        if (lastAnalysisDate != other.lastAnalysisDate) return false
+        if (reputation != other.reputation) return false
+        if (tld != other.tld) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = urlTotalVotes?.hashCode() ?: 0
+        result = 31 * result + (redirectionChain?.hashCode() ?: 0)
+        result = 31 * result + (urlTargetedBrand?.hashCode() ?: 0)
+        result = 31 * result + (url?.hashCode() ?: "".hashCode())
+        result = 31 * result + (firstSubmissionDate?.hashCode() ?: 0)
+        result = 31 * result + (lastSubmissionDate?.hashCode() ?: 0)
+        result = 31 * result + (lastAnalysisResult?.hashCode() ?: 0)
+        result = 31 * result + (lastAnalysisStats?.hashCode() ?: 0)
+        result = 31 * result + (lastModificationDate?.hashCode() ?: 0)
+        result = 31 * result + (title?.hashCode() ?: "".hashCode())
+        result = 31 * result + (timesSubmitted ?: 0)
+        result = 31 * result + (lastAnalysisDate?.hashCode() ?: 0)
+        result = 31 * result + (reputation ?: 0)
+        result = 31 * result + (tld?.hashCode() ?: "".hashCode())
+        return result
+    }
+}
 @Parcelize
 data class UrlTargetedBrand(
     val safeToOpen: String? = null

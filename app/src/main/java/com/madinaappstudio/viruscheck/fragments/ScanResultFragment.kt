@@ -4,13 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.firebase.Firebase
-import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.getField
 import com.madinaappstudio.viruscheck.R
@@ -53,7 +51,7 @@ class ScanResultFragment : Fragment() {
 
         if (scanReport.fileReportResponse != null) {
             val attr = scanReport.fileReportResponse.fileData.fileAttributes
-            val status = if (attr!!.lastAnalysisStats.malicious != 0){
+            val status = if (attr.lastAnalysisStats?.malicious != 0){
                 2
             } else if (attr.lastAnalysisStats.suspicious != 0) {
                 3
@@ -65,10 +63,10 @@ class ScanResultFragment : Fragment() {
             binding.mtScanResultToolbar.title = "File Scan Result"
             bindFileData(scanReport.fileReportResponse)
         } else {
-            val attr = scanReport.urlScanReportResponse!!.urlData.urlAttributes
-            val status = if (attr!!.lastAnalysisStats.malicious != 0) {
+            val stats = scanReport.urlScanReportResponse!!.urlData.urlAttributes!!.lastAnalysisStats!!
+            val status = if (stats.malicious != 0) {
                 2
-            } else if (attr.lastAnalysisStats.suspicious != 0) {
+            } else if (stats.suspicious != 0) {
                 3
             } else {
                 1
@@ -90,12 +88,12 @@ class ScanResultFragment : Fragment() {
 
 
     private fun bindFileData(fileReportResponse: FileReportResponse) {
-        val attribute = fileReportResponse.fileData.fileAttributes!!
-        val stats = attribute.lastAnalysisStats
+        val attribute = fileReportResponse.fileData.fileAttributes
+        val stats = attribute.lastAnalysisStats!!
 
-        binding.tvScanResultFirstSub.text = formatDate(attribute.firstSubmissionDate)
-        binding.tvScanResultLastSub.text = formatDate(attribute.lastSubmissionDate)
-        binding.tvScanResultLastAnalysis.text = formatDate(attribute.lastAnalysisDate)
+        binding.tvScanResultFirstSub.text = formatDate(attribute.firstSubmissionDate!!)
+        binding.tvScanResultLastSub.text = formatDate(attribute.lastSubmissionDate!!)
+        binding.tvScanResultLastAnalysis.text = formatDate(attribute.lastAnalysisDate!!)
 
         setUndetected(stats.undetected)
         setMalicious(stats.malicious)
@@ -106,11 +104,11 @@ class ScanResultFragment : Fragment() {
 
     private fun bindUrlData(urlScanReportResponse: UrlScanReportResponse) {
         val attribute = urlScanReportResponse.urlData.urlAttributes!!
-        val stats = attribute.lastAnalysisStats
+        val stats = attribute.lastAnalysisStats!!
 
-        binding.tvScanResultFirstSub.text = formatDate(attribute.firstSubmissionDate)
-        binding.tvScanResultLastSub.text = formatDate(attribute.lastSubmissionDate)
-        binding.tvScanResultLastAnalysis.text = formatDate(attribute.lastAnalysisDate)
+        binding.tvScanResultFirstSub.text = formatDate(attribute.firstSubmissionDate!!)
+        binding.tvScanResultLastSub.text = formatDate(attribute.lastSubmissionDate!!)
+        binding.tvScanResultLastAnalysis.text = formatDate(attribute.lastAnalysisDate!!)
 
         setUndetected(stats.undetected)
         setMalicious(stats.malicious)
@@ -209,7 +207,7 @@ class ScanResultFragment : Fragment() {
     }
 
 
-    private fun getStatsModel(fileType: String, status: Int) : StatsModel {
+    private fun getStatsModel(fileType: String?, status: Int) : StatsModel {
         val statsModel = StatsModel()
         statsModel.totalScan = 1
         statsModel.file = 1

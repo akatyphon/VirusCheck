@@ -96,6 +96,7 @@
                 android:layout_height="wrap_content"/>
 
             <com.google.android.material.textview.MaterialTextView
+                android:textIsSelectable="true"
                 android:id="@+id/tvHistoryInfoUId"
                 android:text="8d969eef6ecad3c29a3a629280e686cfd5a86aff3ca12020c923adc6c92"
                 android:textSize="16sp"
