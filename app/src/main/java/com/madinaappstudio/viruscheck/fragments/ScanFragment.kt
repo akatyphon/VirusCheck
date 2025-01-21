@@ -36,6 +36,7 @@ import com.madinaappstudio.viruscheck.models.UrlScanReportResponse
 import com.madinaappstudio.viruscheck.models.UrlScanResponse
 import com.madinaappstudio.viruscheck.utils.ProgressLoading
 import com.madinaappstudio.viruscheck.utils.getVirusApi
+import com.madinaappstudio.viruscheck.utils.setLog
 import com.madinaappstudio.viruscheck.utils.showToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -55,6 +56,7 @@ import java.io.FileOutputStream
 import java.net.URLEncoder
 import java.security.MessageDigest
 import java.util.Base64
+import kotlin.math.max
 
 class ScanFragment : Fragment() {
 
@@ -380,6 +382,7 @@ class ScanFragment : Fragment() {
                 WindowManager.LayoutParams.WRAP_CONTENT
             )
             binding.btDialogCancel.setOnClickListener {
+//                cancelScanConfirmation()
                 handler.removeCallbacks(pollingRunnable)
                 hide()
             }
@@ -397,7 +400,8 @@ class ScanFragment : Fragment() {
         fun makeSuccessView(isFile: Boolean) {
             binding.btDialogCancel.visibility = View.GONE
             binding.pbDialogProgressC.visibility = View.GONE
-            binding.ivDialogSuccess.visibility = View.VISIBLE
+            binding.ivDialogStatusImg.setImageResource(R.drawable.ic_success)
+            binding.ivDialogStatusImg.visibility = View.VISIBLE
             binding.tvDialogStatus.text = "Scan Completed"
             binding.tvDialogStatus.setTypeface(null, Typeface.BOLD)
             binding.pbDialogProgressH.visibility = View.GONE
@@ -408,7 +412,33 @@ class ScanFragment : Fragment() {
             }
         }
 
+        fun makeTimeoutView(){
+            binding.btDialogCancel.visibility = View.GONE
+            binding.pbDialogProgressC.visibility = View.GONE
+            binding.ivDialogStatusImg.setImageResource(R.drawable.ic_timeout)
+            binding.ivDialogStatusImg.visibility = View.VISIBLE
+            binding.tvDialogStatus.text = "Request Timeout"
+            binding.tvDialogStatus.setTypeface(null, Typeface.BOLD)
+            binding.pbDialogProgressH.visibility = View.GONE
+            binding.tvDialogMsg.text = "Request taking longer than expected. Try again from history"
+        }
 
+    }
+
+    private fun cancelScanConfirmation() {
+        MaterialAlertDialogBuilder(requireContext()).apply {
+            setTitle("Cancel Scan")
+            setMessage("Are you sure want to cancel?")
+            setPositiveButton("Yes") { dialog, _ ->
+                handler.removeCallbacks(pollingRunnable)
+                loadingDialog.hide()
+                dialog.dismiss()
+            }
+            setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+            }
+            show()
+        }
     }
 
     private fun runPolling(isFile: Boolean, scanId: String, sha256: String? = null, urlBase64: String? = null) {
@@ -416,14 +446,14 @@ class ScanFragment : Fragment() {
         val maxAttempt = 3
         var duration = 10000L
         pollingRunnable = Runnable {
-            if (attempt > maxAttempt) {
-                loadingDialog.setText("Timeout", "Taking longer than expected. Try again from history")
+            if (attempt >= maxAttempt) {
+                loadingDialog.makeTimeoutView()
                 CoroutineScope(Dispatchers.Main).launch{
-                    delay(2000)
+                    delay(3000)
                     handler.removeCallbacks(pollingRunnable)
                     loadingDialog.hide()
-                    return@launch
                 }
+                return@Runnable
             }
             val analysisCall = RetrofitService.service.getAnalyses(scanId, apiKey)
             analysisCall.enqueue(object : Callback<AnalysesModel> {
