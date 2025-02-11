@@ -15,8 +15,8 @@
             android:id="@+id/mtScanResultToolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:navigationIconTint="@color/black"
             app:navigationIcon="@drawable/ic_arrow_back"
+            app:navigationIconTint="@color/black"
             app:title="" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
@@ -107,6 +107,109 @@
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
+
+<!--        <com.google.android.material.card.MaterialCardView-->
+<!--            style="@style/Widget.Material3.CardView.Elevated"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="16dp">-->
+
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:orientation="vertical"-->
+<!--                android:padding="16dp">-->
+
+<!--                <com.google.android.material.textview.MaterialTextView-->
+<!--                    style="@style/TextAppearance.AppCompat.Medium"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="Metadata"-->
+<!--                    android:textStyle="bold" />-->
+
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="16dp"-->
+<!--                    android:orientation="horizontal">-->
+
+<!--                    <com.google.android.material.textview.MaterialTextView-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_height="21dp"-->
+<!--                        android:layout_weight="2"-->
+<!--                        android:gravity="start|center"-->
+<!--                        android:text="Name"-->
+<!--                        android:textColor="@color/light_gray"-->
+<!--                        app:fontFamily="@font/roboto" />-->
+
+<!--                    <com.google.android.material.textview.MaterialTextView-->
+<!--                        android:id="@+id/tvScanResultMeta1"-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_height="21dp"-->
+<!--                        android:layout_weight="1"-->
+<!--                        android:gravity="end|center"-->
+<!--                        android:text="333"-->
+<!--                        android:textColor="@color/light_gray"-->
+<!--                        app:fontFamily="@font/roboto" />-->
+
+<!--                </LinearLayout>-->
+
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="12dp"-->
+<!--                    android:orientation="horizontal">-->
+
+<!--                    <com.google.android.material.textview.MaterialTextView-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_height="21dp"-->
+<!--                        android:layout_weight="2"-->
+<!--                        android:gravity="start|center"-->
+<!--                        android:text="Last Submission"-->
+<!--                        android:textColor="@color/light_gray"-->
+<!--                        app:fontFamily="@font/roboto" />-->
+
+<!--                    <com.google.android.material.textview.MaterialTextView-->
+<!--                        android:id="@+id/tvScanResultLastSub"-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_height="21dp"-->
+<!--                        android:layout_weight="1"-->
+<!--                        android:gravity="end|center"-->
+<!--                        android:text="333"-->
+<!--                        android:textColor="@color/light_gray"-->
+<!--                        app:fontFamily="@font/roboto" />-->
+
+<!--                </LinearLayout>-->
+
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="12dp"-->
+<!--                    android:orientation="horizontal">-->
+
+<!--                    <com.google.android.material.textview.MaterialTextView-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_height="21dp"-->
+<!--                        android:layout_weight="2"-->
+<!--                        android:gravity="start|center"-->
+<!--                        android:text="Last Analysis"-->
+<!--                        android:textColor="@color/light_gray"-->
+<!--                        app:fontFamily="@font/roboto" />-->
+
+<!--                    <com.google.android.material.textview.MaterialTextView-->
+<!--                        android:id="@+id/tvScanResultLastAnalysis"-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_height="21dp"-->
+<!--                        android:layout_weight="1"-->
+<!--                        android:gravity="end|center"-->
+<!--                        android:text="333"-->
+<!--                        android:textColor="@color/light_gray"-->
+<!--                        app:fontFamily="@font/roboto" />-->
+
+<!--                </LinearLayout>-->
+
+<!--            </LinearLayout>-->
+<!--        </com.google.android.material.card.MaterialCardView>-->
 
         <com.google.android.material.card.MaterialCardView
             style="@style/Widget.Material3.CardView.Elevated"

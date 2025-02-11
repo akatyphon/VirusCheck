@@ -1,11 +1,11 @@
 package com.madinaappstudio.viruscheck.fragments
 
-import android.graphics.Color
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.graphics.toColorInt
+import androidx.fragment.app.Fragment
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.getField
@@ -16,8 +16,6 @@ import com.madinaappstudio.viruscheck.utils.ProgressLoading
 import com.madinaappstudio.viruscheck.utils.SharedPreference
 import com.madinaappstudio.viruscheck.utils.USER_NODE
 import com.madinaappstudio.viruscheck.utils.showToast
-import java.text.Format
-import java.util.Locale
 
 class StatsFragment : Fragment() {
 
@@ -40,7 +38,7 @@ class StatsFragment : Fragment() {
         loadStatsData()
     }
 
-    private fun loadStatsData(){
+    private fun loadStatsData() {
         progressLoading.show()
         val userId = SharedPreference(requireContext()).getUserId()!!
         Firebase.firestore.collection(USER_NODE).document(userId).get()
@@ -59,7 +57,7 @@ class StatsFragment : Fragment() {
             }
     }
 
-    private fun bindViewData(statsModel: StatsModel){
+    private fun bindViewData(statsModel: StatsModel) {
         setTotalScan(statsModel.totalScan)
         setClean(statsModel.clean)
         setMalicious(statsModel.malicious)
@@ -76,39 +74,31 @@ class StatsFragment : Fragment() {
     }
 
     private fun setTotalScan(count: Int) {
-        val viewUndetected = binding.viewStatsTotalScan
-        viewUndetected.tvStatsScanCount.setTextColor(
-            Color.parseColor("#1B9AF5")
-        )
-        viewUndetected.tvStatsScanTitle.text = "Total Scan"
-        viewUndetected.tvStatsScanCount.text = "$count"
+        val viewTotalScan = binding.viewStatsTotalScan
+        viewTotalScan.tvStatsScanCount.setTextColor("#1B9AF5".toColorInt())
+        viewTotalScan.tvStatsScanTitle.text = "Total Scan"
+        viewTotalScan.tvStatsScanCount.text = "$count"
     }
 
     private fun setClean(count: Int) {
-        val viewUndetected = binding.viewStatsClean
-        viewUndetected.tvStatsScanCount.setTextColor(
-            Color.parseColor("#22C55E")
-        )
-        viewUndetected.tvStatsScanTitle.text = "Clean"
-        viewUndetected.tvStatsScanCount.text = "$count"
+        val viewTotalClean = binding.viewStatsClean
+        viewTotalClean.tvStatsScanCount.setTextColor("#22C55E".toColorInt())
+        viewTotalClean.tvStatsScanTitle.text = "Clean"
+        viewTotalClean.tvStatsScanCount.text = "$count"
     }
 
     private fun setMalicious(count: Int) {
-        val viewUndetected = binding.viewStatsMalicious
-        viewUndetected.tvStatsScanCount.setTextColor(
-            Color.parseColor("#EF4444")
-        )
-        viewUndetected.tvStatsScanTitle.text = "Malicious"
-        viewUndetected.tvStatsScanCount.text = "$count"
+        val viewMalicious = binding.viewStatsMalicious
+        viewMalicious.tvStatsScanCount.setTextColor("#EF4444".toColorInt())
+        viewMalicious.tvStatsScanTitle.text = "Malicious"
+        viewMalicious.tvStatsScanCount.text = "$count"
     }
 
     private fun setSuspicious(count: Int) {
-        val viewUndetected = binding.viewStatsSuspicious
-        viewUndetected.tvStatsScanCount.setTextColor(
-            Color.parseColor("#EAB308")
-        )
-        viewUndetected.tvStatsScanTitle.text = "Suspicious"
-        viewUndetected.tvStatsScanCount.text = "$count"
+        val viewTotalSuspicious = binding.viewStatsSuspicious
+        viewTotalSuspicious.tvStatsScanCount.setTextColor("#EAB308".toColorInt())
+        viewTotalSuspicious.tvStatsScanTitle.text = "Suspicious"
+        viewTotalSuspicious.tvStatsScanCount.text = "$count"
     }
 
     override fun onDestroyView() {

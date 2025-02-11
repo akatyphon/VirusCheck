@@ -19,6 +19,7 @@ import com.madinaappstudio.viruscheck.utils.SharedPreference
 import com.madinaappstudio.viruscheck.utils.USER_NODE
 import com.madinaappstudio.viruscheck.utils.generateUUID
 import com.madinaappstudio.viruscheck.utils.showToast
+import androidx.core.net.toUri
 
 class SettingsFragment : Fragment() {
 
@@ -50,18 +51,14 @@ class SettingsFragment : Fragment() {
             startActivity(intent)
         }
 
-        binding.btnSettingsSecurity.setOnClickListener {
-            pendingDialog()
-        }
-
         binding.btnSettingsPrivacy.setOnClickListener {
-            pendingDialog()
+            showPrivacy()
         }
 
         binding.btnSettingSC.setOnClickListener {
             val intent = Intent(
                 Intent.ACTION_VIEW,
-                Uri.parse("https://github.com/akatyphon/VirusCheck")
+                "https://github.com/akatyphon/VirusCheck".toUri()
             )
             startActivity(intent)
         }
@@ -85,7 +82,6 @@ class SettingsFragment : Fragment() {
         sb.append("Me Github @akatyphon")
 
         val dialog = MaterialAlertDialogBuilder(requireContext()).apply {
-            setTitle("This project build with ❤\uFE0F by two friends")
             setMessage(sb.toString())
         }
         dialog.show()
@@ -125,7 +121,18 @@ class SettingsFragment : Fragment() {
     private fun pendingDialog() {
         MaterialAlertDialogBuilder(requireContext()).apply {
             setMessage("This feature currently not implemented!")
-            setCancelable(true)
+            show()
+        }
+    }
+
+    private fun showPrivacy(){
+        MaterialAlertDialogBuilder(requireContext()).apply {
+            setTitle("Privacy Policy for VirusCheck App")
+            setMessage("VirusCheck uses the VirusTotal API to analyze files and URLs for malware. " +
+                    "Uploaded files or links are sent to VirusTotal for processing. " +
+                    "We do not store or share your data beyond this service. " +
+                    "Anonymous usage data may be collected to improve the app. " +
+                    "By using VirusCheck, you agree to these terms.")
             show()
         }
     }

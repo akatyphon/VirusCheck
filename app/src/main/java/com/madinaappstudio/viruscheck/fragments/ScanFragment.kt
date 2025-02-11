@@ -468,10 +468,22 @@ class ScanFragment : Fragment() {
                             handler.removeCallbacks(pollingRunnable)
                             if (isFile) getFileReport(sha256!!) else getUrlReport(urlBase64!!)
                         } else {
-                            loadingDialog.setText(
-                                "Analysis In Queue",
-                                "Your ${if (isFile) "File" else "Url"} is queued for analysis. This may take several seconds, Please wait..."
-                            )
+                            when(attempt){
+                                1 -> {
+                                    loadingDialog.setText(
+                                        "Analysis Queued",
+                                        "Your ${if (isFile) "file" else "URL"} has been added to the analysis queue. " +
+                                                "This process may take a few seconds."
+                                    )
+                                }
+                                else -> {
+                                    loadingDialog.setText(
+                                        "Analysis in Progress",
+                                        "We are currently analyzing your ${if (isFile) "file" else "URL"}. " +
+                                                "The process is underway and may take a moment. Hang tight!"
+                                    )
+                                }
+                            }
                             attempt++
                             duration += 20000L
                             handler.postDelayed(pollingRunnable, duration)

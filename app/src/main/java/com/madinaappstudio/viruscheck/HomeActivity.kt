@@ -1,5 +1,6 @@
 package com.madinaappstudio.viruscheck
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
@@ -8,7 +9,6 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.madinaappstudio.viruscheck.databinding.ActivityHomeBinding
-import com.madinaappstudio.viruscheck.utils.setLog
 
 class HomeActivity : AppCompatActivity() {
 
@@ -28,7 +28,7 @@ class HomeActivity : AppCompatActivity() {
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                if (navController.currentDestination?.id == navController.graph.startDestinationId){
+                if (navController.currentDestination?.id == navController.graph.startDestinationId) {
                     finish()
                 } else {
                     navController.popBackStack()

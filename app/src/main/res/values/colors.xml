@@ -8,6 +8,7 @@
 
 
 
+    <color name="bg_total_clean">#E5F5FF</color>
     <color name="bg_undetected">#F0FDF4</color>
     <color name="bg_malicious">#FEF2F2</color>
     <color name="bg_suspicious">#FEFCE8</color>

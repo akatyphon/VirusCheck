@@ -103,24 +103,6 @@
                 android:layout_height="wrap_content"/>
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnSettingsSecurity"
-                android:layout_marginTop="15dp"
-                app:cornerRadius="0dp"
-                app:rippleColor="@android:color/transparent"
-                style="@style/Widget.Material3.Button.TextButton.Icon"
-                android:text="Security Settings"
-                android:textAlignment="textStart"
-                android:textColor="@color/dark_gray"
-                android:drawableTint="@color/dark_gray"
-                android:drawableEnd="@drawable/ic_arrow_forward"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-            <com.google.android.material.divider.MaterialDivider
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSettingsPrivacy"
                 android:layout_marginTop="15dp"
                 app:cornerRadius="0dp"
